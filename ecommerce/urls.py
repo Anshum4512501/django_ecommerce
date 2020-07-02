@@ -22,7 +22,7 @@ import store
 admin.autodiscover()
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    path('userauth/', include('userauthentication.urls')),
     path('store/', include('store.urls')),
     path('', LandingPage.as_view(),name='index'),
 ]

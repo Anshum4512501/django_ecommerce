@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'store',
     'django_countries',
+    'userauthentication',
 ]
 
 MIDDLEWARE = [
@@ -122,7 +123,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIR = os.path.join(BASE_DIR,'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+LOGOUT_REDIRECT_URL = '/userauth/login'
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
