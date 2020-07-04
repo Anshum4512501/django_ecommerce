@@ -38,6 +38,8 @@ class Order(models.Model):
 
     def __str__(self):
         return ("OrderId" + str(self.id)) 
+
+            
     
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL,blank=True,null=True)
@@ -45,6 +47,10 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(default=0,null=True,blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 
+    def get_increment_quantity(self):
+        self.quantity+=1    
+    def get_decrement_quantity(self):
+        self.quantity-=1    
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.SET_NULL,blank=True,null=True)

@@ -2,6 +2,8 @@ from django.shortcuts import render
 from userauthentication.forms import CustomUserCreationForm,UserLoginForm
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView,LogoutView
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 class UserCreationView(CreateView):
@@ -17,3 +19,4 @@ class UserLoginView(LoginView):
 
 class UserLogoutView(LogoutView):
     redirect_field_name = 'login'
+
