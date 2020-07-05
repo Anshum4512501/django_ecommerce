@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block cart_link %}
+<li class="nav-item">
+    <a class ="nav-link " href="{% url 'store:cart' %}"><i class="fas fa-cart-arrow-down btn btn-warning">
+      <sup><span class="badge badge-success font-weight-bolder">{{order_item_quatity}}</span></sup>
+    </i></a>
+</li>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+      
+        <div class="row ">
+            <div class="col-10 shadow p-3 bg-white mt-2 mx-auto">
+                <a href="{% url 'store:all_products' %} " class="btn btn-secondary btn-sm p-2">Continue Shopping</a>
+                <hr>
+            <div class="prices d-flex justify-content-around align-items-center">
+                <p>Total items {{order_item_quatity}} </p>
+                <p>Total price</p>
+                <a class="float-right btn btn-success p-2" href="">Checkout</a>
+            </div>
+                
+            </div>
+        </div>
+
+            <div class="row ">
+                <div class="col-10 shadow p-3 bg-white mt-2 mx-auto  ">
+                    {% for item in order_item %}
+                    <div class="content d-flex justify-content-around align-items-center m-2">
+                        
+                        <img src="{{item.product.product_image.url}}" class="img-thumbnail rounded" style="width: 40px; height:40px" alt="sorry">
+                        <p class="text-wrap" style="width: 6rem;">{{item.product.name}}</p>
+                        <p>{{item.product.product_price}}</p>
+                        <p><button class="btn btn-warning mx-2 border rounded-circle ">-</button>{{item.quantity}} <button class="btn btn-warning mx-2 border rounded-circle">+</button> </p>
+                        <p>  </p>
+                    </div>
+                    {%endfor%}
+                    
+
+                    
+                </div>
+            </div>
+            
+    </div>
+{% endblock %}
+
+    {% block js %}
+        
+        <script src="{% static 'js/cart.js' %}"></script>
+    {% endblock %}

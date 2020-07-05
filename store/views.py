@@ -4,7 +4,7 @@ from store.models import Product,Order,OrderItem,Customer
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,DeleteView,DetailView
 # Create your views here.
 
 
@@ -27,10 +27,24 @@ class CartView(TemplateView):
     template_name = 'store/cart.html'
     def get_context_data(self, *args, **kwargs):
         context = super(CartView,self).get_context_data(*args, **kwargs)
-        context['order_item'] = OrderItem.objects.all()
+        order,created = Order.objects.get_or_create(customer=self.request.user.customer,complete=False)
+        order_items = order.orderitem_set.all()
+        print("order,created",order,created)
+        total_quantity = 0
+        products = []
+        for item in order_items:
+            total_quantity += item.quantity
+            product = Product.objects.get(id=item.product.id)
+            products.append(product)
+        
+        context['order_item'] = order_items
+        context['order_item_quatity'] = total_quantity
+        context['products'] = products
+
         return context
     
-        
+class ItemDelete(DeleteView):
+    pass        
 
 # @csrf_exempt
 def update_cart(request):
@@ -45,7 +59,16 @@ def update_cart(request):
     print("order_item,created",order_item,created)
     print("product_id ",json_data['product_id'])
     if json_data['action']=='add':
+        print("inside add action")
         order_item.get_increment_quantity()
         order_item.save()
-        return render(request,'store/cart.html',{'order_item':order_item})
-    return JsonResponse("update comming from server...%s...%s.....%s....order_item%s....created....%s"%(json_data,product,customer,order_item,created),safe=False)
+        return JsonResponse("update comming from server...%s...%s.....%s....order_item%s....created....%s"%(json_data,product,customer,order_item,created),safe=False)
+    elif json_data['action']=='remove':
+        print("inside remove action")
+        order_item.get_decrement_quantity()
+        order_item.save()
+        if order_item.quantity<=0:
+            order_item.delete()
+        return JsonResponse("update comming from server...%s...%s.....%s....order_item%s....created....%s.....order_quantity%s.."%(json_data,product,customer,order_item,created,order_item.quantity),safe=False)
+
+# return render(request,'store/cart.html',{'order_item':order_item})    

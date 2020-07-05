@@ -50,7 +50,15 @@ class OrderItem(models.Model):
     def get_increment_quantity(self):
         self.quantity+=1    
     def get_decrement_quantity(self):
-        self.quantity-=1    
+        self.quantity-=1 
+
+    def get_total_amount(self):
+        print("Product price in order item",self.product.product_price)
+        return self.product.product_price*self.quantity       
+    
+    def get_total_amount_item(self):
+        print("Product price in order item",self.product.product_price)
+        return self.product.product_price*self.quantity           
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer,on_delete=models.SET_NULL,blank=True,null=True)
