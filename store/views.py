@@ -4,7 +4,9 @@ from store.models import Product,Order,OrderItem,Customer
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 import json
-from django.views.generic import TemplateView,DeleteView,DetailView
+from django.views.generic import TemplateView,DeleteView,DetailView,CreateView
+from django.urls import reverse_lazy
+from .forms import  ShippingAddressForm
 # Create your views here.
 
 
@@ -30,23 +32,60 @@ class CartView(TemplateView):
         order,created = Order.objects.get_or_create(customer=self.request.user.customer,complete=False)
         order_items = order.orderitem_set.all()
         print("order,created",order,created)
+        total_price = 0
         total_quantity = 0
         products = []
         for item in order_items:
             total_quantity += item.quantity
+            total_price += item.quantity*item.product.product_price
             product = Product.objects.get(id=item.product.id)
             products.append(product)
         
         context['order_item'] = order_items
         context['order_item_quatity'] = total_quantity
         context['products'] = products
-
+        context['total_price'] = total_price
         return context
-    
-class ItemDelete(DeleteView):
-    pass        
 
-# @csrf_exempt
+
+class CartDetailView(DetailView):
+    model = Product
+    template_name = 'store/cart_item_detail.html'
+
+class ItemDeleteView(DeleteView):
+    model = OrderItem        
+    success_url= reverse_lazy('cart')
+    template_name = 'store/confirm_delete.html'
+    pk_url_kwarg = 'id' 
+   
+    def get_object(self):
+        self.object = super().get_object()
+        print("Self Object",self.object)
+        return self.object
+class CheckoutView(CreateView):
+    form_class =   ShippingAddressForm
+    template_name = 'store/shipping_address.html'
+    def get_context_data(self, *args, **kwargs):
+        context = super(CheckoutView,self).get_context_data(*args, **kwargs)
+        order,created = Order.objects.get_or_create(customer=self.request.user.customer,complete=False)
+        order_items = order.orderitem_set.all()
+        print("order,created",order,created)
+        total_price = 0
+        total_quantity = 0
+        products = []
+        for item in order_items:
+            total_quantity += item.quantity
+            total_price += item.quantity*item.product.product_price
+            product = Product.objects.get(id=item.product.id)
+            products.append(product)
+        
+        context['order_item'] = order_items
+        context['order_item_quatity'] = total_quantity
+        context['products'] = products
+        context['total_price'] = total_price
+        return context   
+
+@csrf_exempt
 def update_cart(request):
     print(request.body)
     json_data = json.loads(request.body)

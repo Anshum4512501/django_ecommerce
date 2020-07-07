@@ -18,8 +18,8 @@
                 <hr>
             <div class="prices d-flex justify-content-around align-items-center">
                 <p>Total items {{order_item_quatity}} </p>
-                <p>Total price <span class="text-warning font-weight-lighter h1 text-bottom">{{total_price | floatformat:2}}</span> </p>
-               
+                <p>Total price {{total_price}}</p>
+                <a class="float-right btn btn-success p-2" href="">Checkout</a>
             </div>
                 
             </div>
@@ -32,14 +32,15 @@
                         
                         <form action="" method="post">
                             {% csrf_token %}
-                            {{form.as_p}}
-                            <input type="submit" value="Order Now" class="btn btn-outline-success">
-                            <hr>
-                            <hr>
-
+                        {% for item in order_items %}
+                            <img src="{{item.product.product_image.url}}" class="img-thumbnail rounded" style="width: 40px; height:40px" alt="sorry">
+                            <p class="text-wrap" style="width: 6rem;">{{item.product.name}}</p>
+                            <p>{{item.product.product_price}}</p>
+                            <input type="submit" value="yes">
+                        {% endfor %}    
                         </form>
                     </div>
-                         
+                    
 
                     
                 </div>
